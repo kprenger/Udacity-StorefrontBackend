@@ -15,10 +15,11 @@ See the [requirements doc](REQUIREMENTS.md) for more information.
 
 1. Clone the repository to your local machine.
 2. Run `npm install` to install the necessary packages.
-3. Copy the `.env.sample` file to one called `.env` and fill in the blanks.
-4. Run the docker-compose YAML file with your docker tool of choice.
-5. Run `npm run migrate` to build the needed database tables.
-6. Run `npm start` to build the code and start the server.
+3. Copy the `.env.sample` file to one called `.env.dev` and fill in the blanks for your DEV environment.
+4. Copy the `.env.sample` file to one called `.env.test` and fill in the blanks for your TEST environment.
+5. Run the docker-compose YAML file with your docker tool of choice.
+6. Run `npm run migrate` to build the needed database tables.
+7. Run `npm start` to build the code and start the server.
 
 ## Scripts
 

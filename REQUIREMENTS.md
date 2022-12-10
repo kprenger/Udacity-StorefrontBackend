@@ -40,6 +40,9 @@ These are the notes from a meeting with the frontend developer that describe wha
   - `POST /api/users`
   - **Valid JWT required**
   - The JSON body is a representation of a User.
+- Login
+  - `POST /api/authenticate`
+  - The JSON body is a username / password pairing.
 
 ### Orders
 
