@@ -57,24 +57,29 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ### Product
 
-- id (INTEGER)
-- name (VARCHAR 200)
-- price (NUMERIC(20, 2))
-- category (VARCHAR 100)
+| Column   | Data Type          | Description                 |
+| -------- | ------------------ | --------------------------- |
+| id       | SERIAL PRIMARY KEY | The Product ID              |
+| name     | VARCHAR 100        | The name of the Product     |
+| price    | NUMERIC 20, 2      | The price of the Product    |
+| category | VARCHAR 100        | The category of the Product |
 
 ### User
 
-- id (INTEGER)
-- first_name (VARCHAR 200)
-- last_name (VARCHAR 200)
-- username (VARCHAR 200)
-- password (VARCHAR 200)
+| Column          | Data Type          | Description                   |
+| --------------- | ------------------ | ----------------------------- |
+| id              | SERIAL PRIMARY KEY | The User ID                   |
+| first_name      | VARCHAR 100        | The User's first name         |
+| last_name       | VARCHAR 100        | The User's last name          |
+| username        | VARCHAR 100        | The username for the User     |
+| password_digest | VARCHAR            | The User's encrypted password |
 
 ### Orders
 
-- id (INTEGER)
-- product_id (INTEGER - Foreign Key to Product)
-- quantity (INTEGER)
-- user_id (INTEGER - Foreign Key to User)
-- status (VARCHAR 20)
-  - Either `active` or `complete`
+| Column     | Data Type                      | Description                                            |
+| ---------- | ------------------------------ | ------------------------------------------------------ |
+| id         | SERIAL PRIMARY KEY             | The Order ID                                           |
+| quantity   | INTEGER                        | The amount of Products ordered                         |
+| status     | VARCHAR 20                     | The status of the Order. Either `active` or `complete` |
+| product_id | BIGINT REFERENCES products(id) | The Foreign key to the Product table                   |
+| user_id    | BIGINT REFERENCES users(id)    | The Foreign key to the User table                      |
