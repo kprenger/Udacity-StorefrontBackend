@@ -9,9 +9,8 @@ These are the notes from a meeting with the frontend developer that describe wha
 ### Products
 
 - Show All Products (Index)
-  - `GET /api/products?category=:category&top=:number`
+  - `GET /api/products?category=:category`
   - The `category` parameter is optional and will default to showing all products.
-  - The `top` parameter is optional. If specified, will return the top # of given products.
 - Show Specific Product
   - `GET /api/products/:id`
 - Create Product
@@ -22,7 +21,10 @@ These are the notes from a meeting with the frontend developer that describe wha
 **Optional**
 
 - Top 5 most popular products
-  - See "Show All Products" above
+  - `GET /api/products/popular?limit=:limit&category=:category`
+  - "Popular" equates to most sold.
+  - The `limit` parameter is optional. If specified, will return the top # of given products. Otherwise, defaults to 5.
+  - The `category` parameter is optional to filter the result to a specific product category.
 - Available categories
   - `GET /api/products/categories`
 - Products by category
@@ -48,6 +50,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Current Order by user
   - `GET /api/users/:id/orders/current`
   - **Valid JWT required**
+  - The current order should be the only 'active' order.
 
 **Optional**
 
@@ -58,6 +61,7 @@ These are the notes from a meeting with the frontend developer that describe wha
   - `POST /api/users/:id/orders/add`
   - **Valid JWT required**
   - The JSON body is an array of Products.
+  - Adds Product to current order (i.e. the only 'active' order).
 
 ## Data Shapes
 
@@ -82,10 +86,16 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ### Orders
 
-| Column     | Data Type                      | Description                                            |
-| ---------- | ------------------------------ | ------------------------------------------------------ |
-| id         | SERIAL PRIMARY KEY             | The Order ID                                           |
-| quantity   | INTEGER                        | The amount of Products ordered                         |
-| status     | VARCHAR 20                     | The status of the Order. Either `active` or `complete` |
-| product_id | BIGINT REFERENCES products(id) | The Foreign key to the Product table                   |
-| user_id    | BIGINT REFERENCES users(id)    | The Foreign key to the User table                      |
+| Column  | Data Type                   | Description                                            |
+| ------- | --------------------------- | ------------------------------------------------------ |
+| id      | SERIAL PRIMARY KEY          | The Order ID                                           |
+| status  | VARCHAR 20                  | The status of the Order. Either `active` or `complete` |
+| user_id | BIGINT REFERENCES users(id) | The Foreign key to the User table                      |
+
+### Order Products
+
+| Column     | Data Type                      | Description                          |
+| ---------- | ------------------------------ | ------------------------------------ |
+| id         | SERIAL PRIMARY KEY             | The Order Products ID                |
+| quantity   | INTEGER                        | The amount of Products ordered       |
+| product_id | BIGINT REFERENCES products(id) | The Foreign key to the Product table |

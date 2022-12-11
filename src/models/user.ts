@@ -57,7 +57,7 @@ export class UserStore {
 
       return parseDBUser(result.rows[0])
     } catch (err) {
-      throw new Error(`Could not find user ${id}. Error: ${err}`)
+      throw new Error(`Error getting user ${id}: ${err}`)
     }
   }
 
@@ -87,7 +87,7 @@ export class UserStore {
 
       return parseDBUser(result.rows[0])
     } catch (err) {
-      throw new Error(`Unable to create user: ${user}`)
+      throw new Error(`Error creating user ${user}: ${err}`)
     }
   }
 

@@ -18,7 +18,7 @@ const index = async (req: Request, res: Response) => {
 }
 
 const show = async (req: Request, res: Response) => {
-  if (req.params.id === undefined) {
+  if (!req.params.id) {
     res.send('No user ID specified')
     return
   }
@@ -33,7 +33,6 @@ const show = async (req: Request, res: Response) => {
 }
 
 const create = async (req: Request, res: Response) => {
-  console.log('creating')
   try {
     const user: User = {
       firstName: req.body.first_name,
