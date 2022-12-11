@@ -38,7 +38,6 @@ These are the notes from a meeting with the frontend developer that describe wha
   - **Valid JWT required**
 - Create User
   - `POST /api/users`
-  - **Valid JWT required**
   - The JSON body is a representation of a User.
 - Login
   - `POST /api/authenticate`
@@ -55,6 +54,10 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Completed Orders by user
   - `GET /api/users/:id/orders/completed`
   - **Valid JWT required**
+- Add Products to Order
+  - `POST /api/users/:id/orders/add`
+  - **Valid JWT required**
+  - The JSON body is an array of Products.
 
 ## Data Shapes
 

@@ -16,8 +16,6 @@ app.all('*', function (req: Request, res: Response) {
   )
 })
 
-// @ts-ignore
 app.listen(3000, function () {
-  // @ts-ignore
   console.log(`starting app on: ${address}`)
 })

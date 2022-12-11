@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
 
-import { UserStore } from '../models/user'
+import { UserStore, User } from '../models/user'
 import { parseError } from '../utilities/errorParser'
 
 const userStore = new UserStore()
+const { JWT_SECRET } = process.env
 
 const index = async (req: Request, res: Response) => {
   try {
@@ -15,8 +17,62 @@ const index = async (req: Request, res: Response) => {
   }
 }
 
+const show = async (req: Request, res: Response) => {
+  if (req.params.id === undefined) {
+    res.send('No user ID specified')
+    return
+  }
+
+  try {
+    const user = await userStore.show(req.params.id as unknown as number)
+    res.json(user)
+  } catch (err) {
+    res.status(400)
+    res.json(parseError(err))
+  }
+}
+
+const create = async (req: Request, res: Response) => {
+  console.log('creating')
+  try {
+    const user: User = {
+      firstName: req.body.first_name,
+      lastName: req.body.last_name,
+      username: req.body.username,
+      password: req.body.password
+    }
+
+    const result = await userStore.create(user)
+    const token = jwt.sign({ user: result }, JWT_SECRET ?? '')
+
+    res.json(token)
+  } catch (err) {
+    res.status(400)
+    res.json(parseError(err))
+  }
+}
+
+const authenticate = async (req: Request, res: Response) => {
+  try {
+    const result = await userStore.authenticate(
+      req.body.username,
+      req.body.password
+    )
+
+    const token = jwt.sign({ user: result }, JWT_SECRET ?? '')
+
+    res.json(token)
+  } catch (err) {
+    res.status(400)
+    res.json(parseError(err))
+  }
+}
+
 const usersRoutes = (app: express.Application) => {
   app.get('/api/users', index)
+  app.get('/api/users/:id', show)
+  app.post('/api/users', create)
+  app.post('/api/users/authenticate', authenticate)
 }
 
 export default usersRoutes
