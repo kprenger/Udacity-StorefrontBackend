@@ -40,9 +40,13 @@ These are the notes from a meeting with the frontend developer that describe wha
   - **Valid JWT required**
 - Create User
   - `POST /api/users`
+  - **Valid JWT required**
+  - The JSON body is a representation of a User.
+- Register
+  - `POST /api/users/register`
   - The JSON body is a representation of a User.
 - Login
-  - `POST /api/authenticate`
+  - `POST /api/users/authenticate`
   - The JSON body is a username / password pairing.
 
 ### Orders
@@ -50,6 +54,7 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Current Order by user
   - `GET /api/users/:id/orders/current`
   - **Valid JWT required**
+  - **Cannot request for other users**
   - The current order should be the only 'active' order.
 
 **Optional**
@@ -57,10 +62,12 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Completed Orders by user
   - `GET /api/users/:id/orders/completed`
   - **Valid JWT required**
-- Add Products to Order
+  - **Cannot request for other users**
+- Add Product to Order
   - `POST /api/users/:id/orders/add`
   - **Valid JWT required**
-  - The JSON body is an array of Products.
+  - **Cannot request for other users**
+  - The JSON body is a of Product ID and Quantity.
   - Adds Product to current order (i.e. the only 'active' order).
 
 ## Data Shapes

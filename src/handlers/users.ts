@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 
 import { UserStore, User } from '../models/user'
 import { parseError } from '../utilities/errorParser'
+import { verifyAuthToken } from '../utilities/verification'
 
 const userStore = new UserStore()
 const { JWT_SECRET } = process.env
@@ -35,8 +36,8 @@ const show = async (req: Request, res: Response) => {
 const create = async (req: Request, res: Response) => {
   try {
     const user: User = {
-      firstName: req.body.first_name,
-      lastName: req.body.last_name,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       username: req.body.username,
       password: req.body.password
     }
@@ -68,9 +69,10 @@ const authenticate = async (req: Request, res: Response) => {
 }
 
 const usersRoutes = (app: express.Application) => {
-  app.get('/api/users', index)
-  app.get('/api/users/:id', show)
-  app.post('/api/users', create)
+  app.get('/api/users', verifyAuthToken, index)
+  app.get('/api/users/:id', verifyAuthToken, show)
+  app.post('/api/users', verifyAuthToken, create)
+  app.post('/api/users/register', create)
   app.post('/api/users/authenticate', authenticate)
 }
 

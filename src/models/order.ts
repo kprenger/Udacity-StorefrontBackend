@@ -106,24 +106,40 @@ export class OrderStore {
     }
   }
 
-  // async addProductToOrder(
-  //   userId: number,
-  //   productId: number,
-  //   quantity: number
-  // ): Promise<Order> {
-  //   try {
-  //     const conn = await client.connect()
+  async addProductToOrder(
+    userId: number,
+    productId: number,
+    quantity: number
+  ): Promise<Order[]> {
+    try {
+      const conn = await client.connect()
 
-  //     let sql = ''
+      let orderId = -1
 
-  //     const currentOrderResult = await conn.query('SELECT id FROM orders WHERE status="active"')
+      const currentOrderResult = await conn.query(
+        'SELECT id FROM orders WHERE user_id=($1) AND status=($2) LIMIT 1',
+        [userId, 'active']
+      )
 
-  //     if (currentOrderResult.rows[0] && currentOrderResult.rows[0].id) {
-  //       const orderId = currentOrderResult.rows[0]
-  //       sql = 'UPDATE orders SET '
-  //     } else {
+      if (currentOrderResult.rows[0] && currentOrderResult.rows[0].id) {
+        orderId = currentOrderResult.rows[0].id
+      } else {
+        const newOrderResult = await conn.query(
+          'INSERT INTO orders (user_id, status) VALUES ($1, $2) RETURNING *',
+          [userId, 'active']
+        )
+        orderId = newOrderResult.rows[0].id
+      }
 
-  //     }
-  //   }
-  // }
+      const sql =
+        'INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *'
+      await conn.query(sql, [orderId, productId, quantity])
+
+      conn.release()
+
+      return this.getActiveOrderForUser(userId)
+    } catch (err) {
+      throw new Error(`Unable to add Product ${productId} to order: ${err}`)
+    }
+  }
 }

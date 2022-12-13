@@ -2,12 +2,20 @@ import express, { Request, Response } from 'express'
 import { OrderStore } from '../models/order'
 
 import { parseError } from '../utilities/errorParser'
+import { verifyAuthToken, verifyCurrentUser } from '../utilities/verification'
 
 const orderStore = new OrderStore()
 
 const getActiveOrderForUser = async (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send('No user ID specified')
+    return
+  }
+
   try {
-    const orders = await orderStore.getActiveOrderForUser(1)
+    const orders = await orderStore.getActiveOrderForUser(
+      parseInt(req.params.id)
+    )
     res.json(orders)
   } catch (err) {
     res.status(400)
@@ -16,8 +24,34 @@ const getActiveOrderForUser = async (req: Request, res: Response) => {
 }
 
 const getCompleteOrdersForUser = async (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send('No user ID specified')
+    return
+  }
+
   try {
-    const orders = await orderStore.getCompletedOrdersForUser(1)
+    const orders = await orderStore.getCompletedOrdersForUser(
+      parseInt(req.params.id)
+    )
+    res.json(orders)
+  } catch (err) {
+    res.status(400)
+    res.json(parseError(err))
+  }
+}
+
+const addProductToOrder = async (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send('No user ID specified')
+    return
+  }
+
+  try {
+    const orders = await orderStore.addProductToOrder(
+      parseInt(req.params.id),
+      parseInt(req.body.productId),
+      parseInt(req.body.quantity)
+    )
     res.json(orders)
   } catch (err) {
     res.status(400)
@@ -26,8 +60,24 @@ const getCompleteOrdersForUser = async (req: Request, res: Response) => {
 }
 
 const ordersRoutes = (app: express.Application) => {
-  app.get('/api/users/:id/orders/current', getActiveOrderForUser)
-  app.get('/api/users/:id/orders/complete', getCompleteOrdersForUser)
+  app.get(
+    '/api/users/:id/orders/current',
+    verifyAuthToken,
+    verifyCurrentUser,
+    getActiveOrderForUser
+  )
+  app.get(
+    '/api/users/:id/orders/complete',
+    verifyAuthToken,
+    verifyCurrentUser,
+    getCompleteOrdersForUser
+  )
+  app.post(
+    '/api/users/:id/orders/add',
+    verifyAuthToken,
+    verifyCurrentUser,
+    addProductToOrder
+  )
 }
 
 export default ordersRoutes

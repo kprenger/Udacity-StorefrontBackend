@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express'
 
 import { ProductStore, Product } from '../models/product'
 import { parseError } from '../utilities/errorParser'
+import { verifyAuthToken } from '../utilities/verification'
 
 const productStore = new ProductStore()
 
@@ -56,11 +57,25 @@ const getProductCategories = async (req: Request, res: Response) => {
   }
 }
 
+const getPopularProducts = async (req: Request, res: Response) => {
+  try {
+    const products = await productStore.getPopularProducts(
+      parseInt(req.query.limit as string),
+      req.query.category as string
+    )
+    res.json(products)
+  } catch (err) {
+    res.status(400)
+    res.json(parseError(err))
+  }
+}
+
 const productsRoutes = (app: express.Application) => {
   app.get('/api/products', index)
   app.get('/api/products/categories', getProductCategories)
+  app.get('/api/products/popular', getPopularProducts)
   app.get('/api/products/:id', show)
-  app.post('/api/products', create)
+  app.post('/api/products', verifyAuthToken, create)
 }
 
 export default productsRoutes

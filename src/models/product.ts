@@ -82,8 +82,38 @@ export class ProductStore {
     limit?: number,
     category?: string
   ): Promise<Product[]> {
-    // TODO: Finish this route
-    console.log(`${limit}: ${category}`)
-    return []
+    try {
+      const conn = await client.connect()
+
+      let sql = `
+        SELECT count(product_id), products.name, products.price, products.category
+        FROM order_products
+        INNER JOIN products
+        ON order_products.product_id = products.id
+      `
+      const params: Array<string | number> = []
+      let paramIndex = 1
+
+      if (category) {
+        sql += ` WHERE category=($${paramIndex})`
+        paramIndex += 1
+        params.push(category)
+      }
+
+      sql += `
+        GROUP BY product_id, products.name, products.price, products.category
+        ORDER BY count DESC
+        LIMIT ($${paramIndex})
+      `
+      params.push(limit ? limit : 5)
+
+      const result = await conn.query(sql, params)
+
+      conn.release()
+
+      return result.rows
+    } catch (err) {
+      throw new Error(`Error getting popular products: ${err}`)
+    }
   }
 }
