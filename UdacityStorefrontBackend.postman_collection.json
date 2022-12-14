@@ -1,0 +1,476 @@
+{
+	"info": {
+		"_postman_id": "196905e4-0974-44a6-b3e5-44deb4e16845",
+		"name": "Udacity Storefront Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer: {{BearerToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specific User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer: {{BearerToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create New User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer: {{BearerToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Carol\",\n    \"lastName\": \"Barton\",\n    \"username\": \"cbarton\",\n    \"password\": \"Pa55word!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register New User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Quincy\",\n    \"username\": \"jquincy\",\n    \"password\": \"Pa55word!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"jquincy\",\n    \"password\": \"Pa55word!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/authenticate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"authenticate"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specific Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/products/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Products By Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/products?category=food",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "food"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/products/categories",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Popular Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/products/popular",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products",
+								"popular"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer: {{BearerToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Computere\",\n    \"price\": \"2000.00\",\n    \"category\": \"electronics\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Get Active Order for User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer: {{BearerToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users/2/orders/current",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"2",
+								"orders",
+								"current"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Complete Orders for User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer: {{BearerToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/users/2/orders/complete",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"2",
+								"orders",
+								"complete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Products to Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer: {{BearerToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"4\",\n    \"quantity\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/2/orders/add",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"2",
+								"orders",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Current Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer: {{BearerToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"productId\": \"4\",\n    \"quantity\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/2/orders/submit",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"2",
+								"orders",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BearerToken",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyLCJmaXJzdE5hbWUiOiJKb2huIiwibGFzdE5hbWUiOiJRdWluY3kiLCJ1c2VybmFtZSI6ImpxdWluY3kifSwiaWF0IjoxNjcwOTgxNTM2fQ.NHSD_rUiY-7AXNbwaTBvADOikbaS3NWjSro8cgeTIz4"
+		}
+	]
+}

@@ -13,10 +13,12 @@ const getActiveOrderForUser = async (req: Request, res: Response) => {
   }
 
   try {
-    const orders = await orderStore.getActiveOrderForUser(
+    const order = await orderStore.getActiveOrderForUser(
       parseInt(req.params.id)
     )
-    res.json(orders)
+    res.json(
+      order ? order : { message: `No active order for User ${req.params.id}` }
+    )
   } catch (err) {
     res.status(400)
     res.json(parseError(err))
@@ -59,6 +61,21 @@ const addProductToOrder = async (req: Request, res: Response) => {
   }
 }
 
+const submitCurrentOrder = async (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send('No user ID specified')
+    return
+  }
+
+  try {
+    const orders = await orderStore.submitCurrentOrder(parseInt(req.params.id))
+    res.json(orders)
+  } catch (err) {
+    res.status(400)
+    res.json(parseError(err))
+  }
+}
+
 const ordersRoutes = (app: express.Application) => {
   app.get(
     '/api/users/:id/orders/current',
@@ -77,6 +94,12 @@ const ordersRoutes = (app: express.Application) => {
     verifyAuthToken,
     verifyCurrentUser,
     addProductToOrder
+  )
+  app.post(
+    '/api/users/:id/orders/submit',
+    verifyAuthToken,
+    verifyCurrentUser,
+    submitCurrentOrder
   )
 }
 

@@ -61,30 +61,52 @@ function parseDBOrderResult(orders: DBOrderResult[]): Order[] {
   return ordersResult
 }
 
-const getOrdersByStatusSql = `
-  SELECT orders.id AS order_id, orders.status, 
-    users.id AS user_id, 
-    products.id AS product_id, products.name, products.price, products.category, 
-    order_products.quantity
-  FROM orders
-  INNER JOIN order_products
-  ON orders.id = order_products.order_id
-  INNER JOIN products
-  ON order_products.product_id = products.id
-  INNER JOIN users
-  ON orders.user_id = users.id
-  WHERE orders.user_id=($1) AND status=($2)
-`
-
 export class OrderStore {
-  async getActiveOrderForUser(userId: number): Promise<Order[]> {
+  async getOrdersForUser(
+    userId: number,
+    status: string,
+    orderId?: number
+  ): Promise<Order[]> {
     try {
       const conn = await client.connect()
-      const result = await conn.query(getOrdersByStatusSql, [userId, 'active'])
+
+      let sql = `
+        SELECT orders.id AS order_id, orders.status, 
+          users.id AS user_id, 
+          products.id AS product_id, products.name, products.price, products.category, 
+          order_products.quantity
+        FROM orders
+        INNER JOIN order_products
+        ON orders.id = order_products.order_id
+        INNER JOIN products
+        ON order_products.product_id = products.id
+        INNER JOIN users
+        ON orders.user_id = users.id
+        WHERE orders.user_id=($1) AND status=($2)
+      `
+      const params: Array<string | number> = [userId, status]
+
+      if (orderId) {
+        sql += ' AND order_id=($3)'
+        params.push(orderId)
+      }
+
+      const result = await conn.query(sql, params)
 
       conn.release()
 
       return parseDBOrderResult(result.rows)
+    } catch (err) {
+      throw new Error(
+        `Error getting ${status} orders for user ${userId}: ${err}`
+      )
+    }
+  }
+
+  async getActiveOrderForUser(userId: number): Promise<Order> {
+    try {
+      const orders = await this.getOrdersForUser(userId, 'active')
+      return orders[0]
     } catch (err) {
       throw new Error(`Error getting active orders for user ${userId}: ${err}`)
     }
@@ -92,15 +114,7 @@ export class OrderStore {
 
   async getCompletedOrdersForUser(userId: number): Promise<Order[]> {
     try {
-      const conn = await client.connect()
-      const result = await conn.query(getOrdersByStatusSql, [
-        userId,
-        'complete'
-      ])
-
-      conn.release()
-
-      return parseDBOrderResult(result.rows)
+      return await this.getOrdersForUser(userId, 'complete')
     } catch (err) {
       throw new Error(`Error getting active orders for user ${userId}: ${err}`)
     }
@@ -110,7 +124,7 @@ export class OrderStore {
     userId: number,
     productId: number,
     quantity: number
-  ): Promise<Order[]> {
+  ): Promise<Order> {
     try {
       const conn = await client.connect()
 
@@ -140,6 +154,29 @@ export class OrderStore {
       return this.getActiveOrderForUser(userId)
     } catch (err) {
       throw new Error(`Unable to add Product ${productId} to order: ${err}`)
+    }
+  }
+
+  async submitCurrentOrder(userId: number): Promise<Order> {
+    try {
+      const currentOrder = await this.getActiveOrderForUser(userId)
+
+      const conn = await client.connect()
+      const sql = 'UPDATE orders SET status=($1) WHERE id=($2) RETURNING *'
+
+      await conn.query(sql, ['complete', currentOrder.id])
+
+      conn.release()
+
+      const result = await this.getOrdersForUser(
+        userId,
+        'complete',
+        currentOrder.id
+      )
+
+      return result[0]
+    } catch (err) {
+      throw new Error(`Unable to complete current Order: ${err}`)
     }
   }
 }

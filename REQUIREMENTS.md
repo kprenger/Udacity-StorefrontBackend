@@ -8,29 +8,46 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ### Products
 
+Product JSON representation
+
+```
+{
+  "id": 5,
+  "name": "Apple",
+  "price": "0.69",
+  "category": "food"
+}
+```
+
 - Show All Products (Index)
   - `GET /api/products?category=:category`
-  - The `category` parameter is optional and will default to showing all products.
+  - The `category` parameter is optional and can be used to filter the result to a specific category.
 - Show Specific Product
   - `GET /api/products/:id`
 - Create Product
   - `POST /api/products`
   - **Valid JWT required**
-  - The JSON body is a representation of a Product.
-
-**Optional**
-
-- Top 5 most popular products
+  - The JSON body is a representation of a Product as above without the `id` field.
+- Show Popular products
   - `GET /api/products/popular?limit=:limit&category=:category`
-  - "Popular" equates to most sold.
+  - "Popular" equates to highest quantity sold.
   - The `limit` parameter is optional. If specified, will return the top # of given products. Otherwise, defaults to 5.
   - The `category` parameter is optional to filter the result to a specific product category.
-- Available categories
+- Show available categories
   - `GET /api/products/categories`
-- Products by category
-  - See "Show All Products" above
 
 ### Users
+
+User JSON representation
+
+```
+{
+  "id": 1,
+  "firstName": "Jack",
+  "lastName": "Jackson",
+  "username": "jjackson"
+}
+```
 
 - Show All Users (Index)
   - `GET /api/users`
@@ -41,24 +58,60 @@ These are the notes from a meeting with the frontend developer that describe wha
 - Create User
   - `POST /api/users`
   - **Valid JWT required**
-  - The JSON body is a representation of a User.
+  - The JSON body is a representation of a User as above without the `id` field.
 - Register
   - `POST /api/users/register`
-  - The JSON body is a representation of a User.
+  - The JSON body is a representation of a User as above without the `id` field.
 - Login
   - `POST /api/users/authenticate`
-  - The JSON body is a username / password pairing.
+  - The JSON body is a username / password pairing. `{ "username": "jjackson", "password": "Password123" }`
 
 ### Orders
+
+Order JSON representation
+
+```
+{
+  "id": 2,
+  "status": "complete",
+  "userId": 1,
+  "products": [
+    {
+      "product": {
+        "id": 5,
+        "name": "Apple",
+        "price": "0.69",
+        "category": "food"
+      },
+      "quantity": 12
+    },
+    {
+      "product": {
+        "id": 4,
+        "name": "Cell phone",
+        "price": "499.99",
+        "category": "electronics"
+      },
+      "quantity": 1
+    },
+    {
+      "product": {
+        "id": 3,
+        "name": "Computer",
+        "price": "749.99",
+        "category": "electronics"
+      },
+      "quantity": 2
+    }
+  ]
+}
+```
 
 - Current Order by user
   - `GET /api/users/:id/orders/current`
   - **Valid JWT required**
   - **Cannot request for other users**
   - The current order should be the only 'active' order.
-
-**Optional**
-
 - Completed Orders by user
   - `GET /api/users/:id/orders/completed`
   - **Valid JWT required**
@@ -67,8 +120,12 @@ These are the notes from a meeting with the frontend developer that describe wha
   - `POST /api/users/:id/orders/add`
   - **Valid JWT required**
   - **Cannot request for other users**
-  - The JSON body is a of Product ID and Quantity.
-  - Adds Product to current order (i.e. the only 'active' order).
+  - The JSON body is a of Product ID and Quantity. `{ "productId": 1, "quantity": 2 }`
+  - Adds the given Product to the current order.
+- Submit Current Order
+  - `POST /api/users/:id/orders/submit`
+  - **Valid JWT required**
+  - **Cannot request for other users**
 
 ## Data Shapes
 
