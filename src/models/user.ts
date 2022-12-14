@@ -46,7 +46,7 @@ export class UserStore {
     }
   }
 
-  async show(id: number): Promise<User> {
+  async show(id: number): Promise<User | undefined> {
     try {
       const conn = await client.connect()
 
@@ -54,6 +54,10 @@ export class UserStore {
       const result = await conn.query(sql, [id])
 
       conn.release()
+
+      if (result.rows.length === 0) {
+        return
+      }
 
       return parseDBUser(result.rows[0])
     } catch (err) {
@@ -91,12 +95,17 @@ export class UserStore {
     }
   }
 
-  async authenticate(username: string, password: string): Promise<User | null> {
+  async authenticate(
+    username: string,
+    password: string
+  ): Promise<User | undefined> {
     try {
       const conn = await client.connect()
 
       const sql = 'SELECT * FROM users WHERE username=($1)'
       const result = await conn.query(sql, [username])
+
+      conn.release()
 
       if (result.rows.length > 0) {
         const dbUser = result.rows[0] as DBUser
@@ -111,7 +120,7 @@ export class UserStore {
         }
       }
 
-      return null
+      return
     } catch (err) {
       throw new Error(`Error authenticating for ${username}: ${err}`)
     }

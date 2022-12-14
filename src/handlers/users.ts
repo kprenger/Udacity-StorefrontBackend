@@ -26,7 +26,7 @@ const show = async (req: Request, res: Response) => {
 
   try {
     const user = await userStore.show(req.params.id as unknown as number)
-    res.json(user)
+    res.json(user ? user : { message: `No user with id ${req.params.id}` })
   } catch (err) {
     res.status(400)
     res.json(parseError(err))
@@ -59,9 +59,13 @@ const authenticate = async (req: Request, res: Response) => {
       req.body.password
     )
 
-    const token = jwt.sign({ user: result }, JWT_SECRET ?? '')
+    if (result) {
+      const token = jwt.sign({ user: result }, JWT_SECRET ?? '')
 
-    res.json(token)
+      res.json(token)
+    } else {
+      res.json({ message: 'Incorrect username or password. Please try again.' })
+    }
   } catch (err) {
     res.status(400)
     res.json(parseError(err))

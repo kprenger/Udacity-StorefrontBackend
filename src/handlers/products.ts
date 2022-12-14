@@ -24,7 +24,9 @@ const show = async (req: Request, res: Response) => {
 
   try {
     const product = await productStore.show(req.params.id as unknown as number)
-    res.json(product)
+    res.json(
+      product ? product : { message: `No product with id ${req.params.id}` }
+    )
   } catch (err) {
     res.status(400)
     res.json(parseError(err))
