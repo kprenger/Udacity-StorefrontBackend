@@ -18,5 +18,6 @@
     "no-use-before-define": ["error", { "functions": true, "classes": true }],
     "no-var": "error",
     "prefer-const": "error"
-  }
+  },
+  "ignorePatterns": ["node_modules", "tests", "spec", "./dist"]
 }
