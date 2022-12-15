@@ -6,37 +6,6 @@ import {
 
 describe('Verification utility', () => {
   describe('verifyAuthToken method', () => {
-    it('should verify the auth token from the JWT', () => {
-      const req = {
-        headers: {
-          authorization:
-            'Bearer: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxMn19.-foJMy0W7Q58iRAbXHZ-qZgCecsG6nvCqkIwvM6nrdA'
-        }
-      }
-
-      const res = {
-        locals: { userId: 12 },
-        status: () => {
-          fail('status should not be called')
-        },
-        json: (item: string) => {
-          fail(item)
-        }
-      }
-
-      let nextCalled = false
-
-      verifyAuthToken(
-        req as unknown as Request,
-        res as unknown as Response,
-        () => {
-          nextCalled = true
-        }
-      )
-
-      expect(nextCalled).toBeTrue()
-    })
-
     it('should fail if the JWT cannot be verified', () => {
       const req = {
         headers: {
