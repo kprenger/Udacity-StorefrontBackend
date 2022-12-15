@@ -25,16 +25,13 @@ const user3: User = {
 }
 
 describe('User Model', () => {
-  beforeEach(async () => {
+  afterEach(async () => {
     const conn = await client.connect()
     await conn.query('DELETE FROM users')
+    conn.release()
   })
 
   describe('index method', () => {
-    it('should have an index method', () => {
-      expect(userStore.index).toBeDefined()
-    })
-
     it('should return an empty array if no users', async () => {
       const userList = await userStore.index()
 

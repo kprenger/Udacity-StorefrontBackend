@@ -32,7 +32,7 @@ export function verifyCurrentUser(
   next: NextFunction
 ) {
   if (parseInt(req.params.id) !== res.locals.userId) {
-    res.status(400)
+    res.status(401)
     res.json({ message: 'You cannot perform this request on a different user' })
   } else {
     next()

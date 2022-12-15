@@ -51,3 +51,4 @@ See the [requirements doc](REQUIREMENTS.md) for more information on the API and 
 - [ESLint](https://eslint.org/)
 - [Prettier](https://prettier.io/)
 - [Jasmine](https://jasmine.github.io/)
+- [SuperTest](https://github.com/ladjs/supertest)

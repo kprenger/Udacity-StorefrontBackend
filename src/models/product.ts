@@ -30,7 +30,7 @@ export class ProductStore {
     }
   }
 
-  async show(id: number): Promise<Product> {
+  async show(id: number): Promise<Product | undefined> {
     try {
       const conn = await client.connect()
 
@@ -38,6 +38,10 @@ export class ProductStore {
       const result = await conn.query(sql, [id])
 
       conn.release()
+
+      if (result.rows.length === 0) {
+        return
+      }
 
       return result.rows[0]
     } catch (err) {
@@ -86,7 +90,7 @@ export class ProductStore {
       const conn = await client.connect()
 
       let sql = `
-        SELECT count(product_id), products.name, products.price, products.category
+        SELECT sum(quantity) as total_sold, product_id, products.name, products.price, products.category
         FROM order_products
         INNER JOIN products
         ON order_products.product_id = products.id
@@ -102,7 +106,7 @@ export class ProductStore {
 
       sql += `
         GROUP BY product_id, products.name, products.price, products.category
-        ORDER BY count DESC
+        ORDER BY total_sold DESC
         LIMIT ($${paramIndex})
       `
       params.push(limit ? limit : 5)
