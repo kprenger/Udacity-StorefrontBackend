@@ -21,6 +21,8 @@ type DBOrderResult = {
   name: string
   price: number
   category: string
+  url: string
+  description: string
   quantity: number
 }
 
@@ -32,7 +34,9 @@ function parseDBOrderResult(orders: DBOrderResult[]): Order[] {
       id: dbOrder.product_id,
       name: dbOrder.name,
       price: dbOrder.price,
-      category: dbOrder.category
+      category: dbOrder.category,
+      url: dbOrder.url,
+      description: dbOrder.description
     }
 
     const orderProduct: OrderProduct = {
@@ -72,7 +76,7 @@ async function getOrdersForUser(
     let sql = `
       SELECT orders.id AS order_id, orders.status, 
         users.id AS user_id, 
-        products.id AS product_id, products.name, products.price, products.category, 
+        products.id AS product_id, products.name, products.price, products.category, products.url, products.description, 
         order_products.quantity
       FROM orders
       INNER JOIN order_products
@@ -133,6 +137,8 @@ export class OrderStore {
         [userId, 'active']
       )
 
+      // Check for existing order. Create if it doesn't exist.
+
       if (currentOrderResult.rows[0] && currentOrderResult.rows[0].id) {
         orderId = currentOrderResult.rows[0].id
       } else {
@@ -143,15 +149,132 @@ export class OrderStore {
         orderId = newOrderResult.rows[0].id
       }
 
-      const sql =
-        'INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *'
-      await conn.query(sql, [orderId, productId, quantity])
+      // Check if product already exists on order and update if it does. Otherwise, add new order_product.
+
+      const currentOrderProductResult = await conn.query(
+        'SELECT id, quantity FROM order_products WHERE order_id=($1) AND product_id=($2) LIMIT 1',
+        [orderId, productId]
+      )
+
+      if (
+        currentOrderProductResult.rows[0] &&
+        currentOrderProductResult.rows[0].id &&
+        currentOrderProductResult.rows[0].quantity
+      ) {
+        const sql = 'UPDATE order_products SET quantity=($1) WHERE id=($2)'
+        const newQuantity =
+          quantity + currentOrderProductResult.rows[0].quantity
+
+        await conn.query(sql, [
+          newQuantity,
+          currentOrderProductResult.rows[0].id
+        ])
+      } else {
+        const sql =
+          'INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING *'
+        await conn.query(sql, [orderId, productId, quantity])
+      }
 
       conn.release()
 
       return this.getActiveOrderForUser(userId)
     } catch (err) {
       throw new Error(`Unable to add Product ${productId} to order: ${err}`)
+    }
+  }
+
+  async removeProductFromOrder(
+    userId: number,
+    productId: number
+  ): Promise<Order> {
+    try {
+      const conn = await client.connect()
+
+      let orderId = -1
+
+      const currentOrderResult = await conn.query(
+        'SELECT id FROM orders WHERE user_id=($1) AND status=($2) LIMIT 1',
+        [userId, 'active']
+      )
+
+      if (currentOrderResult.rows[0] && currentOrderResult.rows[0].id) {
+        orderId = currentOrderResult.rows[0].id
+      } else {
+        throw new Error('User does not have an active order!')
+      }
+
+      const currentOrderProductResult = await conn.query(
+        'SELECT id, quantity FROM order_products WHERE order_id=($1) AND product_id=($2) LIMIT 1',
+        [orderId, productId]
+      )
+
+      if (
+        currentOrderProductResult.rows[0] &&
+        currentOrderProductResult.rows[0].id
+      ) {
+        const sql = 'DELETE FROM order_products WHERE id=($1)'
+        await conn.query(sql, [currentOrderProductResult.rows[0].id])
+      } else {
+        throw new Error("The Product is not on the User's active order!")
+      }
+
+      conn.release()
+
+      return this.getActiveOrderForUser(userId)
+    } catch (err) {
+      throw new Error(
+        `Unable to remove Product ${productId} from order: ${err}`
+      )
+    }
+  }
+
+  async updateProductQuantityInOrder(
+    userId: number,
+    productId: number,
+    quantity: number
+  ): Promise<Order> {
+    try {
+      const conn = await client.connect()
+
+      let orderId = -1
+
+      const currentOrderResult = await conn.query(
+        'SELECT id FROM orders WHERE user_id=($1) AND status=($2) LIMIT 1',
+        [userId, 'active']
+      )
+
+      // Check for existing order
+
+      if (currentOrderResult.rows[0] && currentOrderResult.rows[0].id) {
+        orderId = currentOrderResult.rows[0].id
+      } else {
+        throw new Error('User does not have an active order!')
+      }
+
+      // Check if product already exists on order and update if it does
+
+      const currentOrderProductResult = await conn.query(
+        'SELECT id, quantity FROM order_products WHERE order_id=($1) AND product_id=($2) LIMIT 1',
+        [orderId, productId]
+      )
+
+      if (
+        currentOrderProductResult.rows[0] &&
+        currentOrderProductResult.rows[0].id
+      ) {
+        const sql = 'UPDATE order_products SET quantity=($1) WHERE id=($2)'
+        await conn.query(sql, [quantity, currentOrderProductResult.rows[0].id])
+      } else {
+        throw new Error("The Product is not on the User's active order!")
+      }
+
+      conn.release()
+
+      return this.getActiveOrderForUser(userId)
+    } catch (err) {
+      throw new Error(
+        `Unable to update quantity for Product ${productId} on order: ${err}`
+      )
     }
   }
 

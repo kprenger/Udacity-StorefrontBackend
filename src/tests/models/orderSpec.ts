@@ -11,19 +11,25 @@ const productStore = new ProductStore()
 const product1: Product = {
   name: 'Product 1',
   price: 10.99,
-  category: 'category 1'
+  category: 'category 1',
+  url: 'http://www.google.com/product1.jpg',
+  description: 'Describe Product 1'
 }
 
 const product2: Product = {
   name: 'Product 2',
   price: 0.99,
-  category: 'category 2'
+  category: 'category 2',
+  url: 'http://www.google.com/product2.jpg',
+  description: 'Describe Product 2'
 }
 
 const product3: Product = {
   name: 'Product 3',
   price: 100.0,
-  category: 'category 3'
+  category: 'category 3',
+  url: 'http://www.google.com/product3.jpg',
+  description: 'Describe Product 3'
 }
 
 const user1: User = {

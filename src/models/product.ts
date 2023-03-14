@@ -5,6 +5,8 @@ export type Product = {
   name: string
   price: number
   category: string
+  url: string
+  description: string
 }
 
 export class ProductStore {

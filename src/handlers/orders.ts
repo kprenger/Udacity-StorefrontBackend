@@ -61,6 +61,43 @@ const addProductToOrder = async (req: Request, res: Response) => {
   }
 }
 
+const removeProductFromOrder = async (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send('No user ID specified')
+    return
+  }
+
+  try {
+    const orders = await orderStore.removeProductFromOrder(
+      parseInt(req.params.id),
+      parseInt(req.body.productId)
+    )
+    res.json(orders)
+  } catch (err) {
+    res.status(400)
+    res.json(parseError(err))
+  }
+}
+
+const updateProductQuantityInOrder = async (req: Request, res: Response) => {
+  if (!req.params.id) {
+    res.send('No user ID specified')
+    return
+  }
+
+  try {
+    const orders = await orderStore.updateProductQuantityInOrder(
+      parseInt(req.params.id),
+      parseInt(req.body.productId),
+      parseInt(req.body.quantity)
+    )
+    res.json(orders)
+  } catch (err) {
+    res.status(400)
+    res.json(parseError(err))
+  }
+}
+
 const submitCurrentOrder = async (req: Request, res: Response) => {
   if (!req.params.id) {
     res.send('No user ID specified')
@@ -94,6 +131,18 @@ const ordersRoutes = (app: express.Application) => {
     verifyAuthToken,
     verifyCurrentUser,
     addProductToOrder
+  )
+  app.post(
+    '/api/users/:id/orders/remove',
+    verifyAuthToken,
+    verifyCurrentUser,
+    removeProductFromOrder
+  )
+  app.post(
+    '/api/users/:id/orders/update',
+    verifyAuthToken,
+    verifyCurrentUser,
+    updateProductQuantityInOrder
   )
   app.post(
     '/api/users/:id/orders/submit',

@@ -8,19 +8,25 @@ const productStore = new ProductStore()
 const product1: Product = {
   name: 'Product 1',
   price: 10.99,
-  category: 'category 1'
+  category: 'category 1',
+  url: 'http://www.google.com/product1.jpg',
+  description: 'Describe Product 1'
 }
 
 const product2: Product = {
   name: 'Product 2',
   price: 0.99,
-  category: 'category 2'
+  category: 'category 2',
+  url: 'http://www.google.com/product2.jpg',
+  description: 'Describe Product 2'
 }
 
 const product3: Product = {
   name: 'Product 3',
   price: 100.0,
-  category: 'category 3'
+  category: 'category 3',
+  url: 'http://www.google.com/product3.jpg',
+  description: 'Describe Product 3'
 }
 
 describe('Product Model', () => {
@@ -151,19 +157,25 @@ describe('Product Model', () => {
     const product4: Product = {
       name: 'Product 4',
       price: 100.99,
-      category: 'category 4'
+      category: 'category 4',
+      url: 'http://www.google.com/product4.jpg',
+      description: 'Describe Product 4'
     }
 
     const product5: Product = {
       name: 'Product 5',
       price: 1.25,
-      category: 'category 5'
+      category: 'category 5',
+      url: 'http://www.google.com/product5.jpg',
+      description: 'Describe Product 5'
     }
 
     const product6: Product = {
       name: 'Product 6',
       price: 20.25,
-      category: 'category 6'
+      category: 'category 6',
+      url: 'http://www.google.com/product6.jpg',
+      description: 'Describe Product 6'
     }
 
     it('should return the 5 most sold products', async () => {

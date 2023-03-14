@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 
 import usersRoutes from './handlers/users'
 import productsRoutes from './handlers/products'
@@ -9,6 +10,7 @@ const app: express.Application = express()
 const address = '0.0.0.0:3000'
 
 app.use(bodyParser.json())
+app.use(cors())
 
 usersRoutes(app)
 productsRoutes(app)
