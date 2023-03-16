@@ -7,7 +7,8 @@ import productsRoutes from './handlers/products'
 import ordersRoutes from './handlers/orders'
 
 const app: express.Application = express()
-const address = '0.0.0.0:3000'
+const port = 8080
+const address = `0.0.0.0:${port}`
 
 app.use(bodyParser.json())
 app.use(cors())
@@ -22,6 +23,6 @@ app.all('*', function (req: Request, res: Response) {
   )
 })
 
-app.listen(3000, function () {
+app.listen(port, function () {
   console.log(`starting app on: ${address}`)
 })
